@@ -1,0 +1,4 @@
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '{"age":22, "firstName": "Franco", "lastName": "Barenghi", "active": true}' 127.0.0.1:9000/user
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '{"shortName":"Reagente", "description": ""}' 127.0.0.1:9000/category
+
