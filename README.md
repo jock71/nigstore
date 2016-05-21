@@ -1,3 +1,6 @@
+# nigstore
+A poor man storage web application
+
 Modern Web Template
 ===========
 
