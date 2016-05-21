@@ -11,6 +11,7 @@ import play.modules.reactivemongo.json.collection.JSONCollection
 import reactivemongo.api.Cursor
 
 import scala.concurrent.Future
+import scala.util.{Success, Failure}
 
 /**
  * The Users controllers encapsulates the Rest endpoints and the interaction with the MongoDB, via ReactiveMongo
@@ -37,9 +38,10 @@ class StorageEntries extends Controller with MongoController {
   // ------------------------------------------ //
 
   import models.JsonFormats._
+  import models.StorageEntry._
   import models._
 
-  def createStorageEntry = Action.async(parse.json) {
+  def createEntry = Action.async(parse.json) {
     request =>
     /*
      * request.body is a JsValue.
@@ -50,7 +52,6 @@ class StorageEntries extends Controller with MongoController {
      */
       request.body.validate[StorageEntry].map {
         entry =>
-        // `user` is an instance of the case class `models.User`
           collection.insert(entry).map {
             lastError =>
               logger.debug(s"Successfully inserted with LastError: $lastError")
@@ -59,32 +60,76 @@ class StorageEntries extends Controller with MongoController {
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def updateStorageEntry(firstName: String, lastName: String) = Action.async(parse.json) {
+  def removeEntry(opId: String) = Action.async(parse.json) {
     request =>
-      request.body.validate[User].map {
-        user =>
-          // find our user by first name and last name
-          val nameSelector = Json.obj("firstName" -> firstName, "lastName" -> lastName)
-          collection.update(nameSelector, user).map {
+          val idSelector = Json.obj("opId" -> opId)
+          collection.remove(idSelector).map {
+            msg =>
+              println(s"$msg")
+              Ok
+
+          }
+  }
+
+  def updateEntry(opId: String) = Action.async(parse.json) {
+    request =>
+      request.body.validate[StorageEntry].map {
+        entry =>
+          val selector = Json.obj("opId" -> opId)
+          collection.update(selector, entry).map {
             lastError =>
               logger.debug(s"Successfully updated with LastError: $lastError")
-              Created(s"User Updated")
+              Created(s"Entry Updated")
           }
+
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def findUsers = Action.async {
+  def pickUp(opId: String) = Action.async(parse.json) {
+    request =>
+      logger.info(s"pickUp request for $opId")
+      request.body.validate[Picking].map {
+          picking:Picking =>
+              logger.info(s"valid picking=$picking")
+              val selector = Json.obj("opId" -> opId)
+              val cursor = collection.find(selector).cursor[StorageEntry]
+              val fEntry = cursor.collect[List](upTo = 1)
+              fEntry.map {
+                  case List(entry:StorageEntry) =>
+                      logger.info(s"picking requested=${picking.quantity}, available=${entry.remainingQuantity}")
+                      if(picking.quantity <= entry.remainingQuantity) {
+                          val updatedEntry = entry.copy(
+                              remainingQuantity = entry.remainingQuantity-picking.quantity,
+                              pickings = entry.pickings ::: List(picking)
+                          )
+                          collection.update(selector, updatedEntry).map {
+                              lastError =>
+                                  logger.debug(s"pickup added lastError:$lastError")
+                                  Ok
+                          }
+                      }
+                      else {
+                          Future.successful(PreconditionFailed)
+                      }
+                      Ok
+              }
+
+      }.getOrElse(Future.successful(BadRequest("invalid json")))
+  }
+
+  def findEntries = Action.async {
     // let's do our query
-    val cursor: Cursor[User] = collection.
+    logger.info("findEntries")
+    val cursor: Cursor[StorageEntry] = collection.
       // find all
-      find(Json.obj("active" -> true)).
+      find(Json.obj()).
       // sort them by creation date
       sort(Json.obj("created" -> -1)).
       // perform the query and get a cursor of JsObject
-      cursor[User]
+      cursor[StorageEntry]
 
     // gather all the JsObjects in a list
-    val futureUsersList: Future[List[User]] = cursor.collect[List]()
+    val futureUsersList: Future[List[StorageEntry]] = cursor.collect[List]()
 
     // transform the list into a JsArray
     val futurePersonsJsonArray: Future[JsArray] = futureUsersList.map { users =>

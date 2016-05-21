@@ -1,0 +1,90 @@
+
+
+    <div ng-controller="StorageDetailsCtrl as sdc">
+        <div class="jumbotron">
+            <h2>Vista Dettaglio Item Magazzino</h2>
+            <p class="pull-right">... a UI created using AngularJS and Bootstrap</p>
+        </div>
+
+        <div>
+            <div class="form-group">
+                <h3>
+                    Dettaglio Item
+                    <a ng-href="/#/storage/picking/2" class="btn btn-primary pull-right" id="btn_storage_picking">Add Picking</a>
+                </h3>
+                <hr>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" ng-model="searchText" placeholder="Type here to filter storage entries...">
+                <hr>
+            </div>
+
+
+            <table id="entry_summary" class="table table-striped">
+                <tr>
+                    <td>Product</td>
+                    <td> {{ sdc.entry.product }} </td>
+                </tr>
+                <tr>
+                    <td>Arrival Date</td>
+                    <td> {{ sdc.entry.arrivalDate }} </td>
+                </tr>
+                <tr>
+                    <td>Expire Date</td>
+                    <td> {{ sdc.entry.expireDate }} </td>
+                </tr>
+                <tr>
+                    <td>Lot</td>
+                    <td> {{ sdc.entry.lot }} </td>
+                </tr>
+                <tr>
+                    <td>Initial Qty</td>
+                    <td> {{ sdc.entry.initialQuantity }} </td>
+                </tr>
+                <tr>
+                    <td>Availability</td>
+                    <td> {{ sdc.entry.remainingQuantity }} </td>
+                </tr>
+            </table>
+
+            <table id="entry_pickings" class="table table-stripped">
+                <thead>
+                    <td>Picking Date</td>
+                    <td>Quantity</td>
+                    <td></td>
+                </thead>
+                <tbody>
+                <tr ng-repeat="picking in sdc.entry.pickings | filter:searchText">
+                    <td>
+                        {{picking.usageDate}}
+                    </td>
+                    <td>
+                        {{picking.quantity}}
+                    </td>
+                    <td>
+                        <a ng-href="/#/storage/xxxxxedit/{{entry.opId}}/{{entry.pickId}}" class="btn btn-success pull-right" id="btn_entry_update">Remove/Undo</a>
+                    </td>
+                </tr>
+                <tr ng-hide="sdc.entry.pickings.length">
+                    <td colspan="3">
+                        <p class="text-center">No Picking Operations Found</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h3>
+                Debug
+            </h3>
+            <hr>
+            <accordion>
+                <accordion-group is-open="status.open">
+                    <accordion-heading>
+                        Json Data <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                    </accordion-heading>
+                    <pre>{{ sdc.entry | json }}</pre>
+                </accordion-group>
+            </accordion>
+        </div>
+
+    </div>

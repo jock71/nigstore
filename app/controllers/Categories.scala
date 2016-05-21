@@ -84,10 +84,10 @@ class Categories extends Controller with MongoController {
       cursor[ProductCategory]
 
     // gather all the JsObjects in a list
-    val futureiCategoriesList: Future[List[ProductCategory]] = cursor.collect[List]()
+    val futureCategoriesList: Future[List[ProductCategory]] = cursor.collect[List]()
 
     // transform the list into a JsArray
-    val futureCategoriesJsonArray: Future[JsArray] = futureiCategoriesList.map { categories =>
+    val futureCategoriesJsonArray: Future[JsArray] = futureCategoriesList.map { categories =>
       Json.arr(categories)
     }
     // everything's ok! Let's reply with the array

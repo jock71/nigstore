@@ -2,3 +2,16 @@ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POS
 
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '{"shortName":"Reagente", "description": ""}' 127.0.0.1:9000/category
 
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '{"opId": "1", "product":"Forbici", "arrivalDate": "20160510", "expireDate": "20161110", "lot": "123456789", "initialQuantity": 10, "remainingQuantity":10, "pickings":[]}' 127.0.0.1:9000/storageEntry
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '{"opId": "2", "product":"Provette", "arrivalDate": "20160510", "expireDate": "20160610", "lot": "987654321", "initialQuantity": 20, "remainingQuantity":20, "pickings":[]}' 127.0.0.1:9000/storageEntry
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '{"opId": "3", "product":"Liberasi", "arrivalDate": "20160510", "expireDate": "20160610", "lot": "00000000", "initialQuantity": 20, "remainingQuantity":15, "pickings":[{"pickId":"1","usageDate":"20160710", "quantity": 5}]}' 127.0.0.1:9000/storageEntry
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X DELETE  127.0.0.1:9000/storageEntry/2 -d "{}"
+
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X PUT -d '{"opId": "2", "product":"Provette", "arrivalDate": "20160510", "expireDate": "20160610", "lot": "987654321", "initialQuantity": 20, "remainingQuantity":20, "pickings":[]}' 127.0.0.1:9000/storageEntry/2
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X PUT -d '{"pickID":"1","usageDate":"20160710", "quantity": 5}' 127.0.0.1:9000/storageEntry/picking/2
+

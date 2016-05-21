@@ -1,0 +1,83 @@
+
+
+    <div ng-controller="StorageCtrl as sc">
+        <div class="jumbotron">
+            <h2>Vista globale Magazzino</h2>
+            <p class="pull-right">... a UI created using AngularJS and Bootstrap</p>
+        </div>
+
+        <div>
+            <div class="form-group">
+                <h3>
+                    Stato Magazzino
+                    <a ng-href="/#/storage/create" class="btn btn-primary pull-right" id="btn_storage_create">Add Entry</a>
+                </h3>
+                <hr>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" ng-model="searchText" placeholder="Type here to filter storage entries...">
+                <hr>
+            </div>
+
+
+            <table id="storage_list" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Arrival Date</th>
+                    <th>Expire Date</th>
+                    <th>Lot</th>
+                    <th>Initial Qty</th>
+                    <th>Availability</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="entry in sc.entries | filter:searchText">
+                    <td>
+                        {{ entry.product }}
+                    </td>
+                    <td>
+                        {{ entry.arrivalDate }}
+                    </td>
+                    <td>
+                        {{ entry.expireDate }}
+                    </td>
+                    <td>
+                        {{ entry.lot }}
+                    </td>
+                    <td>
+                        {{ entry.initialQuantity }}
+                    </td>
+                    <td>
+                        {{ entry.remainingQuantity }}
+                    </td>
+                    <td>
+                        <a ng-href="/#/storage/details/{{entry.opId}}" class="btn btn-success pull-right" id="btn_entry_details">Details</a>
+                    </td>
+                    <td>
+                        <a ng-href="/#/storage/edit/{{entry.opId}}" class="btn btn-success pull-right" id="btn_entry_update">Picking</a>
+                    </td>
+                </tr>
+                <tr ng-hide="sc.entries.length">
+                    <td colspan="3">
+                        <p class="text-center">No Storage Entries Found</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h3>
+                Debug
+            </h3>
+            <hr>
+            <accordion>
+                <accordion-group is-open="status.open">
+                    <accordion-heading>
+                        Json Data <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                    </accordion-heading>
+                    <pre>{{ sc.entries | json }}</pre>
+                </accordion-group>
+            </accordion>
+        </div>
+
+    </div>
