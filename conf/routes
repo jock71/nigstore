@@ -5,25 +5,29 @@
 # ~~~~
 
 # Single endpoint for serving AngularJS
-GET     /                           @controllers.Application.index
-GET     /randomUUID                 @controllers.Application.randomUUID
+GET     /                           controllers.Application.index
+GET     /randomUUID                 controllers.Application.randomUUID
 
 # User management API
-GET     /users                      @controllers.Users.findUsers
-POST    /user                       @controllers.Users.createUser
-PUT     /user/:firstName/:lastName  @controllers.Users.updateUser(firstName: String, lastName: String)
+GET     /users                      controllers.Users.findUsers
+POST    /user                       controllers.Users.createUser
+PUT     /user/:firstName/:lastName  controllers.Users.updateUser(firstName: String, lastName: String)
 
 # Product category management API
-GET     /categories                 @controllers.Categories.findCategories
-POST    /category                   @controllers.Categories.createCategory
-PUT     /category/:shortName/:description @controllers.Categories.updateCategory(shortName: String, description: String)
+GET     /categories                 controllers.Categories.findCategories
+POST    /category                   controllers.Categories.createCategory
+PUT     /category/:shortName/:description controllers.Categories.updateCategory(shortName: String, description: String)
 
 # Storage management API
-GET     /storageEntries             @controllers.StorageEntries.findEntries
-POST    /storageEntry               @controllers.StorageEntries.createEntry
-PUT     /storageEntry/:opId         @controllers.StorageEntries.updateEntry(opId: String)
-PUT     /storageEntry/picking/:opId @controllers.StorageEntries.pickUp(opId: String)
-DELETE  /storageEntry/:opId         @controllers.StorageEntries.removeEntry(opId: String)
+GET     /storageEntries             controllers.StorageEntries.findEntries
+POST    /storageEntry               controllers.StorageEntries.createEntry
+PUT     /storageEntry/:opId         controllers.StorageEntries.updateEntry(opId: String)
+PUT     /storageEntry/picking/:opId controllers.StorageEntries.pickUp(opId: String)
+DELETE  /storageEntry/:opId         controllers.StorageEntries.removeEntry(opId: String)
+
+# Development API
+POST    /initDb                     controllers.BackDoor.initDb
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

@@ -1,16 +1,29 @@
 package controllers
 
-import javax.inject.Singleton
+import javax.inject.Inject
 
-import org.slf4j.{Logger, LoggerFactory}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json._
-import play.api.mvc._
-import play.modules.reactivemongo.MongoController
-import play.modules.reactivemongo.json.collection.JSONCollection
-import reactivemongo.api.Cursor
+import org.slf4j.{LoggerFactory, Logger}
+import persistence.MongoCollection
+import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.Future
+
+import play.api.mvc.{ Action, Controller }
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+
+// Reactive Mongo imports
+import reactivemongo.api.Cursor
+
+import play.modules.reactivemongo.{ // ReactiveMongo Play2 plugin
+MongoController,
+ReactiveMongoApi,
+ReactiveMongoComponents
+}
+
+// BSON-JSON conversions/collection
+import reactivemongo.play.json._
 
 /**
  * The Users controllers encapsulates the Rest endpoints and the interaction with the MongoDB, via ReactiveMongo
@@ -18,8 +31,8 @@ import scala.concurrent.Future
   *
   * @see https://github.com/ReactiveMongo/Play-ReactiveMongo
  */
-@Singleton
-class Categories extends Controller with MongoController {
+class Categories @Inject() (val reactiveMongoApi: ReactiveMongoApi)
+  extends Controller with MongoController with ReactiveMongoComponents {
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[Categories])
 
@@ -81,7 +94,7 @@ class Categories extends Controller with MongoController {
       // sort them by creation date
       sort(Json.obj("created" -> -1)).
       // perform the query and get a cursor of JsObject
-      cursor[ProductCategory]
+      cursor[ProductCategory]()
 
     // gather all the JsObjects in a list
     val futureCategoriesList: Future[List[ProductCategory]] = cursor.collect[List]()
@@ -93,7 +106,10 @@ class Categories extends Controller with MongoController {
     // everything's ok! Let's reply with the array
     futureCategoriesJsonArray.map {
       categories =>
-        Ok(categories(0))
+        categories(0) match {
+          case JsDefined(js) => Ok(js)
+          case _ => NotFound
+        }
     }
   }
 

@@ -1,22 +1,38 @@
 package controllers
 
-import play.modules.reactivemongo.MongoController
-import play.modules.reactivemongo.json.collection.JSONCollection
-import scala.concurrent.Future
-import reactivemongo.api.Cursor
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import javax.inject.Inject
+
 import org.slf4j.{LoggerFactory, Logger}
-import javax.inject.Singleton
-import play.api.mvc._
+import persistence.MongoCollection
+import reactivemongo.play.json.collection.JSONCollection
+
+import scala.concurrent.Future
+
+import play.api.mvc.{ Action, Controller }
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
+
+// Reactive Mongo imports
+import reactivemongo.api.Cursor
+
+import play.modules.reactivemongo.{ // ReactiveMongo Play2 plugin
+MongoController,
+ReactiveMongoApi,
+ReactiveMongoComponents
+}
+
+// BSON-JSON conversions/collection
+import reactivemongo.play.json._
 
 /**
  * The Users controllers encapsulates the Rest endpoints and the interaction with the MongoDB, via ReactiveMongo
  * play plugin. This provides a non-blocking driver for mongoDB as well as some useful additions for handling JSon.
- * @see https://github.com/ReactiveMongo/Play-ReactiveMongo
+  *
+  * @see https://github.com/ReactiveMongo/Play-ReactiveMongo
  */
-@Singleton
-class Users extends Controller with MongoController {
+class Users @Inject() (val reactiveMongoApi: ReactiveMongoApi)
+  extends Controller with MongoController with ReactiveMongoComponents {
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[Users])
 
@@ -77,8 +93,8 @@ class Users extends Controller with MongoController {
       find(Json.obj("active" -> true)).
       // sort them by creation date
       sort(Json.obj("created" -> -1)).
+      cursor[User]()
       // perform the query and get a cursor of JsObject
-      cursor[User]
 
     // gather all the JsObjects in a list
     val futureUsersList: Future[List[User]] = cursor.collect[List]()
@@ -90,7 +106,10 @@ class Users extends Controller with MongoController {
     // everything's ok! Let's reply with the array
     futurePersonsJsonArray.map {
       users =>
-        Ok(users(0))
+        users(0) match {
+          case JsDefined(js) => Ok(js)
+          case _ => NotFound
+        }
     }
   }
 

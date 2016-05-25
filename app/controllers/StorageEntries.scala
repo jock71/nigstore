@@ -1,17 +1,29 @@
 package controllers
 
-import javax.inject.Singleton
+import javax.inject.Inject
 
-import org.slf4j.{Logger, LoggerFactory}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json._
-import play.api.mvc._
-import play.modules.reactivemongo.MongoController
-import play.modules.reactivemongo.json.collection.JSONCollection
-import reactivemongo.api.Cursor
+import org.slf4j.{LoggerFactory, Logger}
+import persistence.MongoCollection
+import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.Future
-import scala.util.{Success, Failure}
+
+import play.api.mvc.{ Action, Controller }
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+
+// Reactive Mongo imports
+import reactivemongo.api.Cursor
+
+import play.modules.reactivemongo.{ // ReactiveMongo Play2 plugin
+MongoController,
+ReactiveMongoApi,
+ReactiveMongoComponents
+}
+
+// BSON-JSON conversions/collection
+import reactivemongo.play.json._
 
 /**
  * The Users controllers encapsulates the Rest endpoints and the interaction with the MongoDB, via ReactiveMongo
@@ -19,8 +31,8 @@ import scala.util.{Success, Failure}
  *
  * @see https://github.com/ReactiveMongo/Play-ReactiveMongo
  */
-@Singleton
-class StorageEntries extends Controller with MongoController {
+class StorageEntries @Inject() (val reactiveMongoApi: ReactiveMongoApi)
+  extends Controller with MongoController with ReactiveMongoComponents {
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[StorageEntries])
 
@@ -31,7 +43,7 @@ class StorageEntries extends Controller with MongoController {
    * the collection reference to avoid potential problems in development with
    * Play hot-reloading.
    */
-  def collection: JSONCollection = db.collection[JSONCollection]("storageEntries")
+  def collection: JSONCollection = db.collection[JSONCollection](MongoCollection.storageEntries)
 
   // ------------------------------------------ //
   // Using case classes + Json Writes and Reads //
@@ -92,8 +104,8 @@ class StorageEntries extends Controller with MongoController {
           picking:Picking =>
               logger.info(s"valid picking=$picking")
               val selector = Json.obj("opId" -> opId)
-              val cursor = collection.find(selector).cursor[StorageEntry]
-              val fEntry = cursor.collect[List](upTo = 1)
+              val cursor = collection.find(selector).cursor[StorageEntry]()
+              val fEntry = cursor.collect[List](1)
               fEntry.map {
                   case List(entry:StorageEntry) =>
                       logger.info(s"picking requested=${picking.quantity}, available=${entry.remainingQuantity}")
@@ -126,19 +138,23 @@ class StorageEntries extends Controller with MongoController {
       // sort them by creation date
       sort(Json.obj("created" -> -1)).
       // perform the query and get a cursor of JsObject
-      cursor[StorageEntry]
+      cursor[StorageEntry]()
 
     // gather all the JsObjects in a list
     val futureUsersList: Future[List[StorageEntry]] = cursor.collect[List]()
 
     // transform the list into a JsArray
-    val futurePersonsJsonArray: Future[JsArray] = futureUsersList.map { users =>
-      Json.arr(users)
+    val futurePersonsJsonArray: Future[JsArray] = futureUsersList.map { entries =>
+      Json.arr(entries)
     }
     // everything's ok! Let's reply with the array
     futurePersonsJsonArray.map {
-      users =>
-        Ok(users(0))
+      entries =>
+          entries(0) match {
+              case JsDefined(js) => Ok(js)
+              case _ => NotFound
+          }
+          //Ok(Json.toJson(entries))
     }
   }
 
