@@ -5,4 +5,6 @@ package persistence
   */
 object MongoCollection {
     val storageEntries = "storageEntries"
+    val categories = "categories"
+    val products = "products"
 }

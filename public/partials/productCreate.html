@@ -1,0 +1,123 @@
+<div ng-controller="CreateProductCtrl as cpc">
+    <h1>Creazione nuovo prodotto</h1>
+
+    <form id="CreateProductForm" name="CreateProductForm" class="form-horizontal" role="form"
+          ng-submit="cpc.createProduct()">
+        <legend class="sm-col-12">Informazioni dettaglio prodotto</legend>
+
+        <div class="form-group">
+            <label id="lbl_name" for="name" class="col-sm-4 control-label">Nome</label>
+
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="name" id="name" placeholder=""
+                       ng-model="cpc.product.name">
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label id="lbl_description" for="description" class="col-sm-4 control-label">Descrizione</label>
+
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="description" id="description" placeholder=""
+                       ng-model="cpc.product.description">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl_category" for="category" class="col-sm-4 control-label">Categoria</label>
+
+            <div class="col-sm-8">
+                <select class="form-control" name="category" id="category" placeholder=""
+                        ng-model="cpc.product.category" ng-options="item as item.shortName for item in cpc.categories">
+                </select>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label id="lbl_orderedThrough" for="orderedThrough" class="col-sm-4 control-label">Ordinato tramite</label>
+
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="orderedThrough" id="orderedThrough" placeholder=""
+                       ng-model="cpc.product.orderedThrough">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl_producer" for="producer" class="col-sm-4 control-label">Produttore</label>
+
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="producer" id="producer" placeholder=""
+                       ng-model="cpc.product.producer">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl_distributor" for="distributor" class="col-sm-4 control-label">Distributore</label>
+
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="distributor" id="distributor" placeholder=""
+                       ng-model="cpc.product.distributor">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl_code" for="code" class="col-sm-4 control-label">Codice</label>
+
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="code" id="code" placeholder=""
+                       ng-model="cpc.product.code">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl_internalCode" for="internalCode" class="col-sm-4 control-label">Codice Interno</label>
+
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="internalCode" id="internalCode" placeholder=""
+                       ng-model="cpc.product.internalCode">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl_packaging" for="packaging" class="col-sm-4 control-label">Confezione</label>
+
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="packaging" id="packaging" placeholder=""
+                       ng-model="cpc.product.packaging">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl_itemsPerPackage" for="itemsPerPackage" class="col-sm-4 control-label">Pezzi/Confezione</label>
+
+            <div class="col-sm-8">
+                <input type="number" class="form-control" name="itemsPerPackage" id="itemsPerPackage" placeholder=""
+                       ng-model="cpc.product.itemsPerPackage">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl_reorderThreshold" for="reorderThreshold" class="col-sm-4 control-label">Soglia di Riordino</label>
+
+            <div class="col-sm-8">
+                <input type="number" class="form-control" name="reorderThreshold" id="reorderThreshold" placeholder=""
+                       ng-model="cpc.product.reorderThreshold">
+            </div>
+        </div>
+
+        <pre>{{ cpc.product | json }}</pre>
+
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8 text-right">
+                <a ng-href="/#/product" id="btn_cancel" class="btn btn-warning">Cancel</a>
+
+                <button type="submit" class="btn btn-success" id="btn_create">Crea Prodotto</button>
+            </div>
+        </div>
+
+
+    </form>
+</div>
+

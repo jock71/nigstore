@@ -18,6 +18,10 @@ GET     /categories                 controllers.Categories.findCategories
 POST    /category                   controllers.Categories.createCategory
 PUT     /category/:shortName/:description controllers.Categories.updateCategory(shortName: String, description: String)
 
+# Products management API
+GET     /products                   controllers.Products.findProducts
+POST    /product                    controllers.Products.createProduct
+
 # Storage management API
 GET     /storageEntries             controllers.StorageEntries.findEntries
 POST    /storageEntry               controllers.StorageEntries.createEntry
@@ -27,6 +31,7 @@ DELETE  /storageEntry/:opId         controllers.StorageEntries.removeEntry(opId:
 
 # Development API
 POST    /initDb                     controllers.BackDoor.initDb
+POST    /dropAll                    controllers.BackDoor.resetDb
 
 
 # Map static resources from the /public folder to the /assets URL path

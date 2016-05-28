@@ -1,0 +1,79 @@
+
+
+    <div ng-controller="ProductCtrl as pc">
+        <div class="jumbotron">
+            <h2>Vista prodotti</h2>
+            <p class="pull-right">... lista dei prodotti gestiti o gestibili </p>
+        </div>
+
+        <div>
+            <div class="form-group">
+                <h3>
+                    Prodotti
+                    <a ng-href="/#/product/create" class="btn btn-primary pull-right" id="btn_product_create">Add Entry</a>
+                </h3>
+                <hr>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" ng-model="searchText" placeholder="Type here to filter product entries...">
+                <hr>
+            </div>
+
+
+            <table id="product_list" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Descrizione</th>
+                    <th>Categoria</th>
+                    <th>Tipo Ordine</th>
+                    <th>Produttore</th>
+                    <th>Distributore</th>
+                    <th>Codice</th>
+                    <th>Codice Interno</th>
+                    <th>Confezionamento</th>
+                    <th>Elementi per conf</th>
+                    <th>Soglia riordino</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="product in pc.products | filter:searchText">
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.category.shortName }}</td>
+                    <td>{{ product.orderedThrough }}</td>
+                    <td>{{ product.producer }}</td>
+                    <td>{{ product.distributor }}</td>
+                    <td>{{ product.code }}</td>
+                    <td>{{ product.internalCode }}</td>
+                    <td>{{ product.packaging }}</td>
+                    <td>{{ product.itemsPerPackage }}</td>
+                    <td>{{ product.reorderThreshold }}</td>
+                    <td>
+                        <a ng-href="/#/product/edit/{{product._id}}" class="btn btn-success pull-right" id="btn_product_update">Modifica</a>
+                    </td>
+                </tr>
+                <tr ng-hide="pc.products.length">
+                    <td colspan="3">
+                        <p class="text-center">Nessun prodotto trovato</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h3>
+                Debug
+            </h3>
+            <hr>
+            <accordion>
+                <accordion-group is-open="status.open">
+                    <accordion-heading>
+                        Json Data <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                    </accordion-heading>
+                    <pre>{{ pc.products | json }}</pre>
+                </accordion-group>
+            </accordion>
+        </div>
+
+    </div>

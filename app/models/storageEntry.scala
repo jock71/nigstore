@@ -1,14 +1,16 @@
 package models
 
+import java.util.Date
+
 case class Picking(pickId: String,
-                   usageDate: String,
+                   usageDate: Date,
                    quantity: Int)
 
 case class StorageEntry(
                        opId: String,
                        product: String,
-                       arrivalDate: String,
-                       expireDate: String,
+                       arrivalDate: Date,
+                       expireDate: Date,
                        lot: String,
                        initialQuantity: Int,
                        remainingQuantity: Int,

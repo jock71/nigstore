@@ -24,6 +24,12 @@ angular.module('myApp.routeConfig', ['ngRoute'])
             .when('/users/edit/:firstName/:lastName', {
                 templateUrl: '/assets/partials/userUpdate.html'
             })
+            .when('/product', {
+                templateUrl: '/assets/partials/productView.html'
+            })
+            .when('/product/create', {
+                templateUrl: '/assets/partials/productCreate.html'
+            })
             .when('/storage', {
                 templateUrl: '/assets/partials/storageView.html'
             })

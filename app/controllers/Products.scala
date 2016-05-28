@@ -2,24 +2,18 @@ package controllers
 
 import javax.inject.Inject
 
-import org.slf4j.{LoggerFactory, Logger}
+import org.slf4j.{Logger, LoggerFactory}
 import persistence.MongoCollection
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.json._
+import play.api.mvc.{Action, Controller}
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.Future
 
-import play.api.mvc.{ Action, Controller }
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json._
-
 // Reactive Mongo imports
+import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.Cursor
-
-import play.modules.reactivemongo.{ // ReactiveMongo Play2 plugin
-MongoController,
-ReactiveMongoApi,
-ReactiveMongoComponents
-}
 
 // BSON-JSON conversions/collection
 import reactivemongo.play.json._
@@ -30,10 +24,10 @@ import reactivemongo.play.json._
   *
   * @see https://github.com/ReactiveMongo/Play-ReactiveMongo
  */
-class Categories @Inject() (val reactiveMongoApi: ReactiveMongoApi)
+class Products @Inject()(val reactiveMongoApi: ReactiveMongoApi)
   extends Controller with MongoController with ReactiveMongoComponents {
 
-  private final val logger: Logger = LoggerFactory.getLogger(classOf[Categories])
+  private final val logger: Logger = LoggerFactory.getLogger(classOf[Products])
 
   /*
    * Get a JSONCollection (a Collection implementation that is designed to work
@@ -42,7 +36,7 @@ class Categories @Inject() (val reactiveMongoApi: ReactiveMongoApi)
    * the collection reference to avoid potential problems in development with
    * Play hot-reloading.
    */
-  def collection: JSONCollection = db.collection[JSONCollection](MongoCollection.categories)
+  def collection: JSONCollection = db.collection[JSONCollection](MongoCollection.products)
 
   // ------------------------------------------ //
   // Using case classes + Json Writes and Reads //
@@ -51,7 +45,7 @@ class Categories @Inject() (val reactiveMongoApi: ReactiveMongoApi)
   import models.ProductCategory._
   import models._
 
-  def createCategory = Action.async(parse.json) {
+  def createProduct = Action.async(parse.json) {
     request =>
     /*
      * request.body is a JsValue.
@@ -60,20 +54,19 @@ class Categories @Inject() (val reactiveMongoApi: ReactiveMongoApi)
      * (insert() takes a JsObject as parameter, or anything that can be
      * turned into a JsObject using a Writes.)
      */
-      request.body.validate[ProductCategory].map {
-        category =>
-        // `user` is an instance of the case class `models.User`
-          collection.insert(category).map {
+      request.body.validate[models.Product].map {
+        product =>
+          collection.insert(product).map {
             lastError =>
               logger.debug(s"Successfully inserted with LastError: $lastError")
-              Created(s"ProductCategory Created")
+              Created(s"Product Created")
           }
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def updateCategory(shortName: String, description: String) = Action.async(parse.json) {
+  def updateProduct(shortName: String, description: String) = Action.async(parse.json) {
     request =>
-      request.body.validate[ProductCategory].map {
+      request.body.validate[models.Product].map {
         category =>
           // find our product category by shortName and description
           val nameSelector = Json.obj("shortName" -> shortName, "description" -> description)
@@ -85,27 +78,27 @@ class Categories @Inject() (val reactiveMongoApi: ReactiveMongoApi)
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def findCategories = Action.async {
+  def findProducts = Action.async {
     // let's do our query
-    val cursor: Cursor[ProductCategory] = collection.
+    val cursor: Cursor[models.Product] = collection.
       // find all
       find(Json.obj()).
       // sort them by creation date
       sort(Json.obj("created" -> -1)).
       // perform the query and get a cursor of JsObject
-      cursor[ProductCategory]()
+      cursor[models.Product]()
 
     // gather all the JsObjects in a list
-    val futureCategoriesList: Future[List[ProductCategory]] = cursor.collect[List]()
+    val futureProductsList: Future[List[models.Product]] = cursor.collect[List]()
 
     // transform the list into a JsArray
-    val futureCategoriesJsonArray: Future[JsArray] = futureCategoriesList.map { categories =>
+    val futureProductsJsonArray: Future[JsArray] = futureProductsList.map { categories =>
       Json.arr(categories)
     }
     // everything's ok! Let's reply with the array
-    futureCategoriesJsonArray.map {
-      categories =>
-        categories(0) match {
+    futureProductsJsonArray.map {
+      products =>
+        products(0) match {
           case JsDefined(js) => Ok(js)
           case _ => NotFound
         }

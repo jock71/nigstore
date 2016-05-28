@@ -15,3 +15,6 @@ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X PUT
 
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X PUT -d '{"pickID":"1","usageDate":"20160710", "quantity": 5}' 127.0.0.1:9000/storageEntry/picking/2
 
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '{}' 127.0.0.1:9000/initDb
+
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X POST -d '{}' 127.0.0.1:9000/dropAll
