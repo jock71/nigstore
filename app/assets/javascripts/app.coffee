@@ -55,3 +55,4 @@ angular.module('myApp.routeConfig', ['ngRoute'])
 @modelsModule = angular.module('myApp.models', [])
 @directivesModule = angular.module('myApp.directives', [])
 @filtersModule = angular.module('myApp.filters', [])
+

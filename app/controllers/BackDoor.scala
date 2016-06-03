@@ -58,6 +58,7 @@ class BackDoor @Inject()(val reactiveMongoApi: ReactiveMongoApi)
             val fResults: Seq[Future[MultiBulkWriteResult]] = List(
                 insertCategories(),
                 insertProducts(),
+                //insert999Products(),
                 insertEntries()
             )
 
@@ -71,12 +72,15 @@ class BackDoor @Inject()(val reactiveMongoApi: ReactiveMongoApi)
     }
 
     val f = new java.text.SimpleDateFormat("yyyy-MM-dd")
-    private final val catPlastic = ProductCategory("Plastiche", "materiale plastico")
+    private final val catPlastic = ProductCategory("Disposable", "Materiale di produzione monouso")
 
     private def insertCategories():Future[MultiBulkWriteResult]  = {
         val collection: JSONCollection = db.collection[JSONCollection](MongoCollection.categories)
         val categories = Seq(
             catPlastic,
+            ProductCategory("Pulizia", "Prodotti per la pulizia degli ambienti"),
+            ProductCategory("Qualità", "Materiale utilizzato per test controllo qualità"),
+            ProductCategory("Vestizione", "Abbigliamento per laboratorio"),
             ProductCategory("Reagenti", "reagenti")
 
         )
@@ -86,9 +90,9 @@ class BackDoor @Inject()(val reactiveMongoApi: ReactiveMongoApi)
         //insertAll(collection, categories)
     }
 
-    private final val prodTermo = Product("Termoprobe", "Termoprobe", catPlastic, "-", "Biorep", "Biorep", "TC-02", "", "1/pkg", 1, 2)
-    private final val prodSir10 = Product("Siringa", "Siringhe 10ml", catPlastic, "-", "Artsana PIC", "Artsana PIC", "03.076000.300.310", "", "1/pkg", 1, 20 )
-    private final val prodPunch = Product("Punch", "Punch 50 ml", catPlastic, "-", "Euroclone", "Corning", "4501", "", "100 pz tot, 25 pz/b, 4 b/cartone", 100, 2)
+    private final val prodTermo = Product("Termoprobe", "Termoprobe", catPlastic, None, "Biorep", Some("Biorep"), "TC-02", None, Some("1/pkg"), 1, 2)
+    private final val prodSir10 = Product("Siringa", "Siringhe 10ml", catPlastic, None , "Artsana PIC", Some("Artsana PIC"), "03.076000.300.310", None, Some("1/pkg"), 1, 20 )
+    private final val prodPunch = Product("Punch", "Punch 50 ml", catPlastic, None, "Euroclone", Some("Corning"), "4501", None, Some("100 pz tot, 25 pz/b, 4 b/cartone"), 100, 2)
     private def insertProducts():Future[MultiBulkWriteResult]  = {
         val collection: JSONCollection = db.collection[JSONCollection](MongoCollection.products)
         val products = Seq(
@@ -101,7 +105,19 @@ class BackDoor @Inject()(val reactiveMongoApi: ReactiveMongoApi)
         bulkResult
         //insertAll(collection, categories)
     }
-
+    private def insert999Products():Future[MultiBulkWriteResult]  = {
+        val collection: JSONCollection = db.collection[JSONCollection](MongoCollection.products)
+        val products = Seq(
+            prodTermo,
+            prodSir10,
+            prodPunch
+        )
+        val p999 = List.tabulate(333)(_ => products).flatten
+        val bulkDocs = p999.map(implicitly[collection.ImplicitlyDocumentProducer](_))
+        val bulkResult = collection.bulkInsert(ordered = true)(bulkDocs: _*)
+        bulkResult
+        //insertAll(collection, categories)
+    }
     private def insertEntries(): Future[MultiBulkWriteResult]  = {
         val collection: JSONCollection = db.collection[JSONCollection](MongoCollection.storageEntries)
 
@@ -113,16 +129,16 @@ class BackDoor @Inject()(val reactiveMongoApi: ReactiveMongoApi)
     }
 
     private val demoEntries:List[StorageEntry] = List(
-        StorageEntry("1", "Siringhe 20cc", f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 0,
+        StorageEntry("1", prodSir10, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 0,
             List(
-                Picking("1", f.parse("2016-04-10"), 10),
-                Picking("2", f.parse("2016-05-20"), 10)
+                Picking("1", f.parse("2016-04-10"), 10, None),
+                Picking("2", f.parse("2016-05-20"), 10, Some("Esperimento Kafka"))
             )),
-        StorageEntry("2", "Siringhe 10cc", f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
-        StorageEntry("3", "Siringhe 1cc", f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
-        StorageEntry("4", "Siringhe 2cc", f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
-        StorageEntry("5", "Siringhe 2.5cc", f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
-        StorageEntry("6", "Siringhe 5cc", f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List())
+        StorageEntry("2", prodSir10, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
+        StorageEntry("3", prodPunch, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
+        StorageEntry("4", prodPunch, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
+        StorageEntry("5", prodTermo, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
+        StorageEntry("6", prodTermo, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List())
     )
 
     private val plasticList:List[StorageEntry] = {
@@ -135,11 +151,11 @@ class BackDoor @Inject()(val reactiveMongoApi: ReactiveMongoApi)
         A21986-5	mag-18	    35	        04/04/16
          */
         List(
-            StorageEntry("p1", "product", f.parse("2013-01-02"), f.parse("2015-10-01"), "A19872-1", 25, 25, List()),
-            StorageEntry("p2", "product", f.parse("2014-04-18"), f.parse("2016-02-16"), "A21986-1", 30, 30, List()),
-            StorageEntry("p3", "product", f.parse("2015-03-06"), f.parse("2017-06-01"), "A21986-3", 30, 30, List()),
-            StorageEntry("p4", "product", f.parse("2016-01-11"), f.parse("2018-05-01"), "A21986-5", 35, 35, List()),
-            StorageEntry("p5", "product", f.parse("2016-04-04"), f.parse("2018-05-01"), "A21986-5", 35, 35, List())
+            StorageEntry("p1", prodSir10, f.parse("2013-01-02"), f.parse("2015-10-01"), "A19872-1", 25, 25, List()),
+            StorageEntry("p2", prodSir10, f.parse("2014-04-18"), f.parse("2016-02-16"), "A21986-1", 30, 30, List()),
+            StorageEntry("p3", prodSir10, f.parse("2015-03-06"), f.parse("2017-06-01"), "A21986-3", 30, 30, List()),
+            StorageEntry("p4", prodSir10, f.parse("2016-01-11"), f.parse("2018-05-01"), "A21986-5", 35, 35, List()),
+            StorageEntry("p5", prodSir10, f.parse("2016-04-04"), f.parse("2018-05-01"), "A21986-5", 35, 35, List())
         )
     }
 

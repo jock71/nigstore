@@ -22,19 +22,27 @@
 
             <table id="entry_summary" class="table table-striped">
                 <tr>
-                    <td>Product</td>
-                    <td> {{ sdc.entry.product }} </td>
+                    <td>Nome</td>
+                    <td> {{ sdc.entry.product.name }} </td>
                 </tr>
                 <tr>
-                    <td>Arrival Date</td>
+                    <td>Descrizione</td>
+                    <td> {{ sdc.entry.product.description }} </td>
+                </tr>
+                <tr>
+                    <td>Codice</td>
+                    <td> {{ sdc.entry.product.code }} </td>
+                </tr>
+                <tr>
+                    <td>Ricevuto</td>
                     <td> {{ sdc.entry.arrivalDate | date:'yyyy-MM-dd' }} </td>
                 </tr>
                 <tr>
-                    <td>Expire Date</td>
+                    <td>Scadenza</td>
                     <td> {{ sdc.entry.expireDate | date:'yyyy-MM-dd' }} </td>
                 </tr>
                 <tr>
-                    <td>Lot</td>
+                    <td>Lotto</td>
                     <td> {{ sdc.entry.lot }} </td>
                 </tr>
                 <tr>
@@ -42,8 +50,8 @@
                     <td> {{ sdc.entry.initialQuantity }} </td>
                 </tr>
                 <tr>
-                    <td>Availability</td>
-                    <td> {{ sdc.entry.remainingQuantity }} </td>
+                    <td>Giacenza</td>
+                    <td> {{ sdc.entry.remainingQuantity }} ({{sdc.entry.remainingQuantity * sdc.entry.product.itemsPerPackage}}) </td>
                 </tr>
             </table>
 

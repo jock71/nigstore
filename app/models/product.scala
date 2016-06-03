@@ -4,12 +4,12 @@ case class Product(
                   name: String,
                   description: String,
                   category: ProductCategory,
-                  orderedThrough: String,
+                  orderedThrough: Option[String],
                   producer: String,
-                  distributor: String,
+                  distributor: Option[String],
                   code: String,
-                  internalCode: String,
-                  packaging: String,
+                  internalCode: Option[String],
+                  packaging: Option[String],
                   itemsPerPackage: Int,
                   reorderThreshold: Int
                   )

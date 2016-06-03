@@ -1,0 +1,135 @@
+<div ng-controller="CreateStorageCtrl as csc">
+    <form id="CreateStorageForm" name="CreateStorageForm" class="form-horizontal" role="form"
+          ng-submit="csc.create()">
+
+        <div class="jumbotron">
+            <h2>Ricevimento prodotto</h2>
+            <p class="pull-right">... caricamento di un prodotto appena ricevuto</p>
+        </div>
+
+        <div>
+            <div class="form-group">
+                <h3>
+                    Prodotto
+                    <a ng-href="/#/product/create'" class="btn btn-primary pull-right" id="btn_product_new">Nuovo</a>
+                </h3>
+                <hr>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" ng-model="searchText"
+                       placeholder="Inserisci filtro ricerca prodotto">
+                <hr>
+            </div>
+
+            <div class="form-group">
+                <table id="product_list" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Nome</th>
+                        <th>Descrizione</th>
+                        <th>Categoria</th>
+                        <th>Produttore</th>
+                        <th>Distributore</th>
+                        <th>Codice</th>
+                        <th>Codice Interno</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="product in csc.products | filter:searchText | limitTo:20">
+                        <td>
+                            <div ng-click="csc.selectProduct(product)" class="btn btn-primary pull-right"
+                                 id="btn_product_select">Seleziona
+                            </div>
+                        </td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.description }}</td>
+                        <td>{{ product.category.shortName }}</td>
+                        <td>{{ product.producer }}</td>
+                        <td>{{ product.distributor }}</td>
+                        <td>{{ product.code }}</td>
+                        <td>{{ product.internalCode }}</td>
+                    </tr>
+                    <tr ng-hide="csc.products.length">
+                        <td colspan="8">
+                            <p class="text-center">Nessun prodotto trovato</p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-group">
+                <label id="lbl_product" for="product" class="col-sm-4 control-label">Prodotto</label>
+
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="product" id="product"
+                           placeholder="Seleziona uno dei prodotti sopra"
+                           ng-model="csc.newEntry.product.description" readonly>
+                    </input>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label id="lbl_arrivalDate" for="arrivalDate" class="col-sm-4 control-label">Data Carico</label>
+
+                <div class="col-sm-8">
+                    <input type="date" class="form-control" ng-required="true" name="arrivalDate"
+                           id="arrivalDate" placeholder="yyyy-MM-dd" value="{{arrivalDate | arrivalDate:MM/dd/yyyy}}"
+                           ng-model="csc.newEntry.arrivalDate">
+                </div>
+            </div>
+            <div class="form-group">
+                <label id="lbl_expireDate" for="expireDate" class="col-sm-4 control-label">Scadenza</label>
+
+                <div class="col-sm-8">
+                    <input type="date" class="form-control" ng-required="true" name="expireDate"
+                           id="expireDate" placeholder="yyyy-MM-dd"
+                           ng-model="csc.newEntry.expireDate">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label id="lbl_lot" for="lot" class="col-sm-4 control-label">Lotto</label>
+
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="lot" id="lot" placeholder=""
+                           ng-model="csc.newEntry.lot">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label id="lbl_initialQuantity" for="initialQuantity"
+                       class="col-sm-4 control-label">Quantit&agrave;</label>
+
+                <div class="col-sm-8">
+                    <input type="number" class="form-control" name="initialQuantity" id="initialQuantity"
+                           placeholder="" min="1" ng-required="true"
+                           ng-model="csc.newEntry.initialQuantity">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8 text-right">
+                    <a ng-href="/#/storage" id="btn_cancel" class="btn btn-warning">Annulla</a>
+
+                    <button type="submit" class="btn btn-success" id="btn_create">Registra ricevimento</button>
+                </div>
+            </div>
+
+            <h3>
+                Debug
+            </h3>
+            <hr>
+            <accordion>
+                <accordion-group is-open="status.open">
+                    <accordion-heading>
+                        Json Data <i class="pull-right glyphicon"
+                                     ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                    </accordion-heading>
+                    <pre>{{ csc.newEntry | json }}</pre>
+                </accordion-group>
+            </accordion>
+        </div>
+    </form>
+</div>

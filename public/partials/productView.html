@@ -15,7 +15,7 @@
                 <hr>
             </div>
             <div class="form-group">
-                <input class="form-control" type="text" ng-model="searchText" placeholder="Type here to filter product entries...">
+                <input class="form-control" type="text" ng-model="searchText.$" placeholder="Type here to filter product entries...">
                 <hr>
             </div>
 
@@ -23,8 +23,12 @@
             <table id="product_list" class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Nome</th>
-                    <th>Descrizione</th>
+                    <th ng-click="pc.sort('name')">Nome
+                        <span class="glyphicon sort-icon" ng-show="pc.sortKey=='name'" ng-class="{'glyphicon-chevron-up':pc.sortReverse,'glyphicon-chevron-down':!pc.sortReverse}"></span>
+                    </th>
+                    <th ng-click="pc.sort('description')">Descrizione
+                        <span class="glyphicon sort-icon" ng-show="pc.sortKey=='description'" ng-class="{'glyphicon-chevron-up':pc.sortReverse,'glyphicon-chevron-down':!pc.sortReverse}"></span>
+                    </th>
                     <th>Categoria</th>
                     <th>Tipo Ordine</th>
                     <th>Produttore</th>
@@ -38,7 +42,21 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="product in pc.products | filter:searchText">
+                <tr>
+                    <td><input class="form-control" type="text" ng-model="searchText.name" placeholder="Filter.."></td>
+                    <td><input class="form-control" type="text" ng-model="searchText.description" placeholder="Filter.."></td>
+                    <td><input class="form-control" type="text" ng-model="searchText.category.shortName" placeholder="Filter.."></td>
+                    <td><input class="form-control" type="text" ng-model="searchText.orderedThrough" placeholder="Filter.."></td>
+                    <td><input class="form-control" type="text" ng-model="searchText.producer" placeholder="Filter.."></td>
+                    <td><input class="form-control" type="text" ng-model="searchText.distributor" placeholder="Filter.."></td>
+                    <td><input class="form-control" type="text" ng-model="searchText.code" placeholder="Filter.."></td>
+                    <td><input class="form-control" type="text" ng-model="searchText.internalCode" placeholder="Filter.."></td>
+                    <td><input class="form-control" type="text" ng-model="searchText.packaging" placeholder="Filter.."></td>
+                    <td><input class="form-control" type="text" ng-model="searchText.itemsPerPackage" placeholder="Filter.."></td>
+                    <td><input class="form-control" type="text" ng-model="searchText.reorderThreshold" placeholder="Filter.."></td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr ng-repeat="product in pc.products | filter:searchText | orderBy:pc.sortKey:pc.sortReverse">
                     <td>{{ product.name }}</td>
                     <td>{{ product.description }}</td>
                     <td>{{ product.category.shortName }}</td>

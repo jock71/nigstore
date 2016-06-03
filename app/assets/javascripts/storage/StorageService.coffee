@@ -22,5 +22,34 @@ class StorageService
             )
         deferred.promise
 
+    listProducts: () ->
+        @$log.debug "listProducts()"
+        deferred = @$q.defer()
+
+        @$http.get("/products")
+        .success((data, status, headers) =>
+                @$log.info("Successfully listed product entries - status #{status}")
+                deferred.resolve(data)
+            )
+        .error((data, status, headers) =>
+                @$log.error("Failed to list product entries - status #{status}")
+                deferred.reject(data)
+            )
+        deferred.promise
+
+    createStorageEntry: (storageEntry) ->
+        @$log.debug "createStorageEntry #{angular.toJson(storageEntry, true)}"
+        deferred = @$q.defer()
+
+        @$http.post('/storageEntry', storageEntry)
+        .success((data, status, headers) =>
+                 @$log.info("Successfully created storageEntry- status #{status}")
+                 deferred.resolve(data)
+             )
+        .error((data, status, headers) =>
+                 @$log.error("Failed to create storageEntry - status #{status}")
+                 deferred.reject(data)
+              )
+        deferred.promise
 
 servicesModule.service('StorageService', ['$log', '$http', '$q', StorageService])

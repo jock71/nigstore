@@ -24,6 +24,7 @@
                 <thead>
                 <tr>
                     <th>Product</th>
+                    <th>Description</th>
                     <th>Arrival Date</th>
                     <th>Expire Date</th>
                     <th>Lot</th>
@@ -34,7 +35,10 @@
                 <tbody>
                 <tr ng-repeat="entry in sc.entries | filter:searchText">
                     <td>
-                        {{ entry.product }}
+                        {{ entry.product.name }}
+                    </td>
+                    <td>
+                        {{ entry.product.description }}
                     </td>
                     <td>
                         {{ entry.arrivalDate | date:'yyyy-MM-dd' }}
@@ -54,8 +58,8 @@
                     <td>
                         <a ng-href="/#/storage/details/{{entry.opId}}" class="btn btn-success pull-right" id="btn_entry_details">Details</a>
                     </td>
-                    <td ng-if="entry.remainingQuantity > 0">
-                        <a ng-href="/#/storage/edit/{{entry.opId}}" class="btn btn-success pull-right" id="btn_entry_update">Picking</a>
+                    <td>
+                        <a ng-if="entry.remainingQuantity > 0" ng-href="/#/storage/edit/{{entry.opId}}" class="btn btn-success pull-right" id="btn_entry_update">Picking</a>
                     </td>
                 </tr>
                 <tr ng-hide="sc.entries.length">
