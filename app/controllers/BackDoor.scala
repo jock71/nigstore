@@ -129,16 +129,16 @@ class BackDoor @Inject()(val reactiveMongoApi: ReactiveMongoApi)
     }
 
     private val demoEntries:List[StorageEntry] = List(
-        StorageEntry("1", prodSir10, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 0,
+        StorageEntry(prodSir10, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 0,
             List(
                 Picking("1", f.parse("2016-04-10"), 10, None),
                 Picking("2", f.parse("2016-05-20"), 10, Some("Esperimento Kafka"))
             )),
-        StorageEntry("2", prodSir10, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
-        StorageEntry("3", prodPunch, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
-        StorageEntry("4", prodPunch, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
-        StorageEntry("5", prodTermo, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
-        StorageEntry("6", prodTermo, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List())
+        StorageEntry(prodSir10, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
+        StorageEntry(prodPunch, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
+        StorageEntry(prodPunch, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
+        StorageEntry(prodTermo, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List()),
+        StorageEntry(prodTermo, f.parse("2016-05-02"), f.parse("2017-05-02"), "12345", 20, 20, List())
     )
 
     private val plasticList:List[StorageEntry] = {
@@ -151,11 +151,11 @@ class BackDoor @Inject()(val reactiveMongoApi: ReactiveMongoApi)
         A21986-5	mag-18	    35	        04/04/16
          */
         List(
-            StorageEntry("p1", prodSir10, f.parse("2013-01-02"), f.parse("2015-10-01"), "A19872-1", 25, 25, List()),
-            StorageEntry("p2", prodSir10, f.parse("2014-04-18"), f.parse("2016-02-16"), "A21986-1", 30, 30, List()),
-            StorageEntry("p3", prodSir10, f.parse("2015-03-06"), f.parse("2017-06-01"), "A21986-3", 30, 30, List()),
-            StorageEntry("p4", prodSir10, f.parse("2016-01-11"), f.parse("2018-05-01"), "A21986-5", 35, 35, List()),
-            StorageEntry("p5", prodSir10, f.parse("2016-04-04"), f.parse("2018-05-01"), "A21986-5", 35, 35, List())
+            StorageEntry(prodSir10, f.parse("2013-01-02"), f.parse("2015-10-01"), "A19872-1", 25, 25, List()),
+            StorageEntry(prodSir10, f.parse("2014-04-18"), f.parse("2016-02-16"), "A21986-1", 30, 30, List()),
+            StorageEntry(prodSir10, f.parse("2015-03-06"), f.parse("2017-06-01"), "A21986-3", 30, 30, List()),
+            StorageEntry(prodSir10, f.parse("2016-01-11"), f.parse("2018-05-01"), "A21986-5", 35, 35, List()),
+            StorageEntry(prodSir10, f.parse("2016-04-04"), f.parse("2018-05-01"), "A21986-5", 35, 35, List())
         )
     }
 

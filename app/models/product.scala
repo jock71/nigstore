@@ -1,5 +1,8 @@
 package models
 
+import reactivemongo.bson.BSONObjectID
+
+
 case class Product(
                   name: String,
                   description: String,
@@ -11,11 +14,13 @@ case class Product(
                   internalCode: Option[String],
                   packaging: Option[String],
                   itemsPerPackage: Int,
-                  reorderThreshold: Int
+                  reorderThreshold: Int,
+                  _id: BSONObjectID = BSONObjectID.generate
                   )
 
 object Product {
     import play.api.libs.json.Json
+
 
     // Generates Writes and Reads for Feed thanks to Json Macros
     implicit val categoryFormat = Json.format[ProductCategory]

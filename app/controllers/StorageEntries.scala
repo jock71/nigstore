@@ -4,11 +4,12 @@ import javax.inject.Inject
 
 import org.slf4j.{LoggerFactory, Logger}
 import persistence.MongoCollection
+import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.Future
 
-import play.api.mvc.{ Action, Controller }
+import play.api.mvc.{AnyContent, Action, Controller}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -64,7 +65,8 @@ class StorageEntries @Inject() (val reactiveMongoApi: ReactiveMongoApi)
      */
       request.body.validate[StorageEntry].map {
         entry =>
-          collection.insert(entry).map {
+          val uEntry = entry.copy(_id = BSONObjectID.generate)
+          collection.insert(uEntry).map {
             lastError =>
               logger.debug(s"Successfully inserted with LastError: $lastError")
               Created(s"StorageEntry Created")
@@ -72,9 +74,9 @@ class StorageEntries @Inject() (val reactiveMongoApi: ReactiveMongoApi)
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def removeEntry(opId: String) = Action.async(parse.json) {
+  def removeEntry(_id: String) = Action.async(parse.json) {
     request =>
-          val idSelector = Json.obj("opId" -> opId)
+          val idSelector = Json.obj("_id" -> _id)
           collection.remove(idSelector).map {
             msg =>
               println(s"$msg")
@@ -83,11 +85,11 @@ class StorageEntries @Inject() (val reactiveMongoApi: ReactiveMongoApi)
           }
   }
 
-  def updateEntry(opId: String) = Action.async(parse.json) {
+  def updateEntry(_id: String) = Action.async(parse.json) {
     request =>
       request.body.validate[StorageEntry].map {
         entry =>
-          val selector = Json.obj("opId" -> opId)
+          val selector = Json.obj("_id" -> _id)
           collection.update(selector, entry).map {
             lastError =>
               logger.debug(s"Successfully updated with LastError: $lastError")
@@ -97,13 +99,42 @@ class StorageEntries @Inject() (val reactiveMongoApi: ReactiveMongoApi)
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def pickUp(opId: String) = Action.async(parse.json) {
+
+  private def findEntries(jObj: JsObject): Action[AnyContent] =
+      Action.async {
+      val cursor: Cursor[StorageEntry] = collection.
+        // find all
+        find(jObj).
+        // sort them by creation date
+        sort(Json.obj("created" -> -1)).
+        // perform the query and get a cursor of JsObject
+        cursor[StorageEntry]()
+
+      // gather all the JsObjects in a list
+      val futureUsersList: Future[List[StorageEntry]] = cursor.collect[List]()
+
+      // transform the list into a JsArray
+      val futurePersonsJsonArray: Future[JsArray] = futureUsersList.map { entries =>
+          Json.arr(entries)
+      }
+      // everything's ok! Let's reply with the array
+      futurePersonsJsonArray.map {
+          entries =>
+              entries(0) match {
+                  case JsDefined(js) => Ok(js)
+                  case _ => NotFound
+              }
+          //Ok(Json.toJson(entries))
+      }
+  }
+
+  def pickUp(_id: String) = Action.async(parse.json) {
     request =>
-      logger.info(s"pickUp request for $opId")
+      logger.info(s"pickUp request for ${_id}")
       request.body.validate[Picking].map {
           picking:Picking =>
               logger.info(s"valid picking=$picking")
-              val selector = Json.obj("opId" -> opId)
+              val selector = Json.obj("_id" -> _id)
               val cursor = collection.find(selector).cursor[StorageEntry]()
               val fEntry = cursor.collect[List](1)
               fEntry.map {
@@ -129,33 +160,7 @@ class StorageEntries @Inject() (val reactiveMongoApi: ReactiveMongoApi)
       }.getOrElse(Future.successful(BadRequest("invalid json")))
   }
 
-  def findEntries = Action.async {
-    // let's do our query
-    logger.info("findEntries")
-    val cursor: Cursor[StorageEntry] = collection.
-      // find all
-      find(Json.obj()).
-      // sort them by creation date
-      sort(Json.obj("created" -> -1)).
-      // perform the query and get a cursor of JsObject
-      cursor[StorageEntry]()
-
-    // gather all the JsObjects in a list
-    val futureUsersList: Future[List[StorageEntry]] = cursor.collect[List]()
-
-    // transform the list into a JsArray
-    val futurePersonsJsonArray: Future[JsArray] = futureUsersList.map { entries =>
-      Json.arr(entries)
-    }
-    // everything's ok! Let's reply with the array
-    futurePersonsJsonArray.map {
-      entries =>
-          entries(0) match {
-              case JsDefined(js) => Ok(js)
-              case _ => NotFound
-          }
-          //Ok(Json.toJson(entries))
-    }
-  }
+  def findEntries: Action[AnyContent] = findEntries(Json.obj())
+  def findEntry(_id: String): Action[AnyContent] = findEntries(Json.obj("_id"-> _id))
 
 }

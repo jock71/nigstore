@@ -1,8 +1,11 @@
 package models
 
+import reactivemongo.bson.BSONObjectID
+
 case class ProductCategory(
                           shortName: String,
-                          description: String
+                          description: String,
+                          _id: BSONObjectID = BSONObjectID.generate
                           )
 
 object ProductCategory {

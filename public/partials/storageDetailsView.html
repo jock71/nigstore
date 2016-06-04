@@ -10,7 +10,7 @@
             <div class="form-group">
                 <h3>
                     Dettaglio Item
-                    <a ng-href="/#/storage/picking/2" class="btn btn-primary pull-right" id="btn_storage_picking">Add Picking</a>
+                    <a ng-href="/#/storage/picking/{{sdc.entry._id}}" class="btn btn-primary pull-right" id="btn_storage_picking">Preleva items</a>
                 </h3>
                 <hr>
             </div>
@@ -59,6 +59,7 @@
                 <thead>
                     <td>Picking Date</td>
                     <td>Quantity</td>
+                    <td>Destinazione</td>
                     <td></td>
                 </thead>
                 <tbody>
@@ -68,6 +69,9 @@
                     </td>
                     <td>
                         {{picking.quantity}}
+                    </td>
+                    <td>
+                        {{picking.usage}}
                     </td>
                     <td>
                         <a ng-href="/#/storage/xxxxxedit/{{entry.opId}}/{{entry.pickId}}" class="btn btn-success pull-right" id="btn_entry_update">Remove/Undo</a>

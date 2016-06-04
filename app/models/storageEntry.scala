@@ -2,6 +2,8 @@ package models
 
 import java.util.Date
 
+import reactivemongo.bson.BSONObjectID
+
 case class Picking(pickId: String,
                    usageDate: Date,
                    quantity: Int,
@@ -9,14 +11,14 @@ case class Picking(pickId: String,
                   )
 
 case class StorageEntry(
-                       opId: String,
                        product: Product,
                        arrivalDate: Date,
                        expireDate: Date,
                        lot: String,
                        initialQuantity: Int,
                        remainingQuantity: Int,
-                       pickings: List[Picking]
+                       pickings: List[Picking],
+                       _id: BSONObjectID = BSONObjectID.generate
                        )
 
 object StorageEntry {

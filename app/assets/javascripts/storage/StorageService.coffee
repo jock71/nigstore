@@ -22,6 +22,21 @@ class StorageService
             )
         deferred.promise
 
+    getStorageEntry: (_id) ->
+        @$log.debug "getStorageEntry(#{_id})"
+        deferred = @$q.defer()
+
+        @$http.get("/storageEntry/#{_id}")
+        .success((data, status, headers) =>
+                 @$log.info("Successfully retrieved storage entry - status #{status}")
+                 deferred.resolve(data)
+            )
+        .error((data, status, headers) =>
+                 @$log.error("Failed to retrieve storage entry - status #{status}")
+                 deferred.reject(data)
+            )
+        deferred.promise
+
     listProducts: () ->
         @$log.debug "listProducts()"
         deferred = @$q.defer()

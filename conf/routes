@@ -25,6 +25,7 @@ POST    /product                    controllers.Products.createProduct
 # Storage management API
 GET     /storageEntries             controllers.StorageEntries.findEntries
 POST    /storageEntry               controllers.StorageEntries.createEntry
+GET     /storageEntry/:opId         controllers.StorageEntries.findEntry(opId: String)
 PUT     /storageEntry/:opId         controllers.StorageEntries.updateEntry(opId: String)
 PUT     /storageEntry/picking/:opId controllers.StorageEntries.pickUp(opId: String)
 DELETE  /storageEntry/:opId         controllers.StorageEntries.removeEntry(opId: String)
