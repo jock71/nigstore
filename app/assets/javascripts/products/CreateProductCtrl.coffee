@@ -9,6 +9,7 @@ class CreateProductCtrl
 
     createProduct: () ->
         @$log.debug "createProduct()"
+        @product._id =  "000000000000000000000000"
         @ProductService.createProduct(@product)
         .then(
             (data) =>

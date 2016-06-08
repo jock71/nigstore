@@ -7,6 +7,7 @@ import persistence.MongoCollection
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
+import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.Future
@@ -56,7 +57,8 @@ class Products @Inject()(val reactiveMongoApi: ReactiveMongoApi)
      */
       request.body.validate[models.Product].map {
         product =>
-          collection.insert(product).map {
+          val uProduct = product.copy( _id = BSONObjectID.generate())
+          collection.insert(uProduct).map {
             lastError =>
               logger.debug(s"Successfully inserted with LastError: $lastError")
               Created(s"Product Created")

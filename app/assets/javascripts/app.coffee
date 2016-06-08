@@ -30,6 +30,9 @@ angular.module('myApp.routeConfig', ['ngRoute'])
             .when('/product/create', {
                 templateUrl: '/assets/partials/productCreate.html'
             })
+            .when('/product/edit/:_id', {
+                templateUtl: '/assets/partials/wip.html'
+            })
             .when('/storage', {
                 templateUrl: '/assets/partials/storageView.html'
             })
@@ -39,8 +42,23 @@ angular.module('myApp.routeConfig', ['ngRoute'])
             .when('/storage/details/:opId', {
                 templateUrl: '/assets/partials/storageDetailsView.html'
             })
+            .when('/storage/edit/:opId', {
+                templateUrl: '/assets/partials/wip.html'
+            })
+            .when('/storage/edit/:_id/:pickId', {
+                templateUrl: '/assets/partials/wip.html'
+            })
             .when('/storage/picking/:opId', {
-                templateUrl: '/assets/partials/storagePicking.html'
+                templateUrl: '/assets/partials/wip.html'
+            })
+            .when('/stock', {
+                templateUrl: '/assets/partials/stockView.html'
+            })
+            .when('/stock/:_id', {
+                templateUrl: '/assets/partials/wip.html'
+            })
+            .when('/stock/details/:prodId', {
+                templateUrl: '/assets/partials/stockView.html'
             })
             .otherwise({redirectTo: '/'})])
     .config(['$locationProvider', ($locationProvider) ->

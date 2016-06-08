@@ -30,6 +30,9 @@ PUT     /storageEntry/:opId         controllers.StorageEntries.updateEntry(opId:
 PUT     /storageEntry/picking/:opId controllers.StorageEntries.pickUp(opId: String)
 DELETE  /storageEntry/:opId         controllers.StorageEntries.removeEntry(opId: String)
 
+# Stock management API
+GET     /stock/prodId/:productId    controllers.Stock.findByProductId(productId: String)
+
 # Development API
 POST    /initDb                     controllers.BackDoor.initDb
 POST    /dropAll                    controllers.BackDoor.resetDb

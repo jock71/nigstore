@@ -1,0 +1,62 @@
+
+
+    <div ng-controller="StockCtrl as sc">
+        <div class="jumbotron">
+            <h2>Vista stock</h2>
+            <p class="pull-right">... disponibilit&agrave; stock</p>
+        </div>
+
+        <div ng-include="'/assets/partials/browseProduct.html'">
+        </div>
+
+        <div>
+            <table id="product_stock" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Arrival Date</th>
+                    <th>Expire Date</th>
+                    <th>Lot</th>
+                    <th>Initial Qty</th>
+                    <th>Availability</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="entry in sc.stockEntries | filter:searchText">
+                    <td>
+                        {{ entry.arrivalDate | date:'yyyy-MM-dd' }}
+                    </td>
+                    <td>
+                        {{ entry.expireDate | date:'yyyy-MM-dd' }}
+                    </td>
+                    <td>
+                        {{ entry.lot }}
+                    </td>
+                    <td>
+                        {{ entry.initialQuantity }}
+                    </td>
+                    <td>
+                        {{ entry.remainingQuantity }}
+                    </td>
+                </tr>
+                <tr ng-hide="sc.stockEntries.length">
+                    <td colspan="5">
+                        <p class="text-center">No Storage Entries Found</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <h3>
+            Debug
+        </h3>
+        <hr>
+        <accordion>
+            <accordion-group is-open="status.open">
+                <accordion-heading>
+                    Json Data <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                </accordion-heading>
+                <pre>{{ sc.stockEntries | json }}</pre>
+            </accordion-group>
+        </accordion>
+
+    </div>

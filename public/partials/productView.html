@@ -23,6 +23,7 @@
             <table id="product_list" class="table table-striped">
                 <thead>
                 <tr>
+                    <th>&nbsp;</th>
                     <th ng-click="pc.sort('name')">Nome
                         <span class="glyphicon sort-icon" ng-show="pc.sortKey=='name'" ng-class="{'glyphicon-chevron-up':pc.sortReverse,'glyphicon-chevron-down':!pc.sortReverse}"></span>
                     </th>
@@ -43,6 +44,7 @@
                 </thead>
                 <tbody>
                 <tr>
+                    <td>&nbsp;</td>
                     <td><input class="form-control" type="text" ng-model="searchText.name" placeholder="Filter.."></td>
                     <td><input class="form-control" type="text" ng-model="searchText.description" placeholder="Filter.."></td>
                     <td><input class="form-control" type="text" ng-model="searchText.category.shortName" placeholder="Filter.."></td>
@@ -57,6 +59,9 @@
                     <td>&nbsp;</td>
                 </tr>
                 <tr ng-repeat="product in pc.products | filter:searchText | orderBy:pc.sortKey:pc.sortReverse">
+                    <td>
+                        <a ng-href="/#/stock/{{product._id}}" class="btn btn-success pull-right" id="btn_product_stock">Giacenza</a>
+                    </td>
                     <td>{{ product.name }}</td>
                     <td>{{ product.description }}</td>
                     <td>{{ product.category.shortName }}</td>

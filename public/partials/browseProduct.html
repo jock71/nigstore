@@ -1,0 +1,45 @@
+<div ng-controller="ProductCtrl as pc">
+    <div class="form-group">
+        <input class="form-control" type="text" ng-model="searchText.$" placeholder="Type here to filter product entries...">
+        <hr>
+    </div>
+    <div class="form-group">
+        <table id="product_list" class="table table-striped">
+            <thead>
+            <tr>
+                <th>&nbsp;</th>
+                <th>Nome</th>
+                <th>Descrizione</th>
+                <th>Categoria</th>
+                <th>Produttore</th>
+                <th>Distributore</th>
+                <th>Codice</th>
+                <th>Codice Interno</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="product in pc.products | filter:searchText | limitTo:20"
+                ng-class="{success: pc.getSelectedProduct() == product._id}" >
+                <td>
+                    <div ng-click="pc.setSelectedProduct(product._id)" class="btn btn-primary pull-right"
+                         id="btn_product_select">Seleziona
+                    </div>
+                </td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.category.shortName }}</td>
+                <td>{{ product.producer }}</td>
+                <td>{{ product.distributor }}</td>
+                <td>{{ product.code }}</td>
+                <td>{{ product.internalCode }}</td>
+            </tr>
+            <tr ng-hide="pc.products.length">
+                <td colspan="8">
+                    <p class="text-center">Nessun prodotto trovato</p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

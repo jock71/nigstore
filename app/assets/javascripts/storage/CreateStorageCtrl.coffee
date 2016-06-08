@@ -29,7 +29,6 @@ class CreateStorageCtrl
         @newEntry.pickings = []
         @newEntry.remainingQuantity = @newEntry.initialQuantity
         @newEntry._id =   "000000000000000000000000"  # ObjectID.generate()
-        # @newEntry._id = "57517a30a65242ae0e5c4db2"  # ObjectID.generate()
         @StorageService.createStorageEntry(@newEntry)
         .then(
             (data) =>
