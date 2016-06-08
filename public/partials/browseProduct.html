@@ -21,7 +21,9 @@
             <tr ng-repeat="product in pc.products | filter:searchText | limitTo:20"
                 ng-class="{success: pc.getSelectedProduct() == product._id}" >
                 <td>
-                    <div ng-click="pc.setSelectedProduct(product._id)" class="btn btn-primary pull-right"
+                    <div ng-click="pc.setSelectedProduct(product._id)"
+                         class="btn btn-primary pull-right"
+                         ng-show="pc.getSelectedProduct() != product._id"
                          id="btn_product_select">Seleziona
                     </div>
                 </td>
