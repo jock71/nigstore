@@ -10,7 +10,7 @@
             <div class="form-group">
                 <h3>
                     Dettaglio Item
-                    <a ng-href="/#/storage/picking/{{sdc.entry._id}}" class="btn btn-primary pull-right" id="btn_storage_picking">Preleva items</a>
+                    <a ng-show="sdc.entry.remainingQuantity" ng-href="/#/storage/picking/{{sdc.entry._id}}" class="btn btn-primary pull-right" id="btn_storage_picking">Preleva items</a>
                 </h3>
                 <hr>
             </div>

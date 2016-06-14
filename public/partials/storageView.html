@@ -61,7 +61,7 @@
                         <a ng-href="/#/storage/details/{{entry._id}}" class="btn btn-success pull-right" id="btn_entry_details">Details</a>
                     </td>
                     <td>
-                        <a ng-if="entry.remainingQuantity > 0" ng-href="/#/storage/edit/{{entry._id}}" class="btn btn-success pull-right" id="btn_entry_update">Picking</a>
+                        <a ng-if="entry.remainingQuantity > 0" ng-href="/#/storage/picking/{{entry._id}}" class="btn btn-success pull-right" id="btn_entry_update">Picking</a>
                     </td>
                 </tr>
                 <tr ng-hide="sc.entries.length">

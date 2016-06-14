@@ -48,8 +48,8 @@ angular.module('myApp.routeConfig', ['ngRoute'])
             .when('/storage/edit/:_id/:pickId', {
                 templateUrl: '/assets/partials/wip.html'
             })
-            .when('/storage/picking/:opId', {
-                templateUrl: '/assets/partials/wip.html'
+            .when('/storage/picking/:_id', {
+                templateUrl: '/assets/partials/storagePicking.html'
             })
             .when('/stock', {
                 templateUrl: '/assets/partials/stockView.html'

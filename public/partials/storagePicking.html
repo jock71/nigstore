@@ -1,0 +1,114 @@
+
+
+    <div ng-controller="StoragePickingCtrl as spc">
+        <div class="jumbotron">
+            <h2>Prelievo elementi</h2>
+            <p class="pull-right">... da lotto con giacenza</p>
+        </div>
+
+        <div>
+            <div class="form-group">
+                <h3>
+                    Dettaglio Item
+                </h3>
+                <hr>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" ng-model="searchText" placeholder="Type here to filter storage entries...">
+                <hr>
+            </div>
+
+
+            <table id="entry_summary" class="table table-striped">
+                <tr>
+                    <td>Nome</td>
+                    <td> {{ spc.entry.product.name }} </td>
+                </tr>
+                <tr>
+                    <td>Descrizione</td>
+                    <td> {{ spc.entry.product.description }} </td>
+                </tr>
+                <tr>
+                    <td>Codice</td>
+                    <td> {{ spc.entry.product.code }} </td>
+                </tr>
+                <tr>
+                    <td>Ricevuto</td>
+                    <td> {{ spc.entry.arrivalDate | date:'yyyy-MM-dd' }} </td>
+                </tr>
+                <tr>
+                    <td>Scadenza</td>
+                    <td> {{ spc.entry.expireDate | date:'yyyy-MM-dd' }} </td>
+                </tr>
+                <tr>
+                    <td>Lotto</td>
+                    <td> {{ spc.entry.lot }} </td>
+                </tr>
+                <tr>
+                    <td>Initial Qty</td>
+                    <td> {{ spc.entry.initialQuantity }} </td>
+                </tr>
+                <tr>
+                    <td>Giacenza</td>
+                    <td> {{ spc.entry.remainingQuantity }} ({{spc.entry.remainingQuantity * spc.entry.product.itemsPerPackage}}) </td>
+                </tr>
+            </table>
+
+            <form id="CreatePickingForm" name="CreatePickingForm" class="form-horizontal" role="form"
+                  ng-submit="spc.appendPicking()">
+                <legend class="sm-col-12">Informazioni dettaglio prelievo prodotto</legend>
+
+                <div class="form-group">
+                    <label id="lbl_usageDate" for="usageDate" class="col-sm-4 control-label">Data prelievo</label>
+
+                    <div class="col-sm-8">
+                        <input type="date" class="form-control" name="usageDate" id="usageDate" placeholder="yyyy-MM-dd"
+                               ng-model="spc.picking.usageDate" ng-required="true">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="lbl_quantity" for="quantity" class="col-sm-4 control-label">
+                        Quantit&agrave; ({{ spc.entry.remainingQuantity }})
+                    </label>
+
+                    <div class="col-sm-8">
+                        <input type="number" class="form-control" name="quantity" id="quantity" placeholder=""
+                               ng-model="spc.picking.quantity" ng-required="true">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="lbl_usage" for="usage" class="col-sm-4 control-label">Destinazione</label>
+
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="usage" id="usage" placeholder=""
+                               ng-model="spc.picking.usage" ng-required="true">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-4 col-sm-8 text-right">
+                        <a ng-href="/#/storage" id="btn_cancel" class="btn btn-warning">Annulla</a>
+
+                        <button type="submit" class="btn btn-success" id="btn_create">Registra Prelievo</button>
+                    </div>
+                </div>
+            </form>
+
+
+            <h3>
+                Debug
+            </h3>
+            <hr>
+            <accordion>
+                <accordion-group is-open="status.open">
+                    <accordion-heading>
+                        Json Data <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                    </accordion-heading>
+                    <pre>{{ spc.picking | json }}</pre>
+                </accordion-group>
+            </accordion>
+        </div>
+
+    </div>
